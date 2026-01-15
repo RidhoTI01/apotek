@@ -1,0 +1,203 @@
+{% extends 'base.html' %}
+
+{% block title %}Kalkulator BMI - Apotek Online{% endblock %}
+
+{% block extra_css %}
+<style>
+    .bmi-hero {
+        background: var(--primary-gradient);
+        color: white;
+        padding: 3rem 0;
+        border-radius: 15px;
+        margin-bottom: 2rem;
+    }
+    
+    .bmi-calculator-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .result-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        height: 100%;
+    }
+    
+    .bmi-value {
+        font-size: 4rem;
+        font-weight: 800;
+    }
+    
+    .category-box {
+        padding: 1rem;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 1.2rem;
+    }
+    
+    .chart-item {
+        padding: 0.75rem 1rem;
+        margin-bottom: 0.5rem;
+        border-radius: 8px;
+        color: white;
+        font-weight: 500;
+    }
+    
+    .info-card {
+        border-left: 4px solid;
+        border-radius: 8px;
+        height: 100%;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="bmi-hero text-center">
+    <div class="container">
+        <h1 class="display-4 fw-bold mb-3"><i class="bi bi-calculator me-3"></i>Kalkulator BMI</h1>
+        <p class="lead">Hitung Indeks Massa Tubuh Anda dan ketahui status kesehatan Anda</p>
+    </div>
+</div>
+
+<!-- Calculator Section -->
+<div class="container">
+    <div class="row g-4">
+        <!-- Calculator Form -->
+        <div class="col-lg-6">
+            <div class="bmi-calculator-card card">
+                <div class="card-body p-4">
+                    <h3 class="card-title mb-4"><i class="bi bi-input-cursor me-2"></i>Masukkan Data Anda</h3>
+                    
+                    <form method="POST">
+                        {% csrf_token %}
+                        
+                        <div class="mb-4">
+                            <label for="berat" class="form-label fw-semibold">Berat Badan (kg)</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control form-control-lg" 
+                                       id="berat" name="berat" step="0.1" min="1" max="500"
+                                       value="{% if result %}{{ result.berat }}{% endif %}" required>
+                                <span class="input-group-text bg-light">kg</span>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="tinggi" class="form-label fw-semibold">Tinggi Badan (cm)</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control form-control-lg" 
+                                       id="tinggi" name="tinggi" step="0.1" min="50" max="300"
+                                       value="{% if result %}{{ result.tinggi }}{% endif %}" required>
+                                <span class="input-group-text bg-light">cm</span>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary btn-lg w-100 py-3">
+                            <i class="bi bi-calculator me-2"></i>Hitung BMI
+                        </button>
+                    </form>
+                    
+                    <!-- BMI Chart -->
+                    <div class="mt-5">
+                        <h5 class="mb-3"><i class="bi bi-bar-chart me-2"></i>Kategori BMI</h5>
+                        <div class="chart-item bg-primary">BMI < 18.5 - Kekurangan Berat Badan</div>
+                        <div class="chart-item bg-success">BMI 18.5 - 24.9 - Normal (Ideal)</div>
+                        <div class="chart-item bg-warning">BMI 25 - 29.9 - Kelebihan Berat Badan</div>
+                        <div class="chart-item bg-danger">BMI ≥ 30 - Obesitas</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Result Section -->
+        <div class="col-lg-6">
+            <div class="result-card card">
+                <div class="card-body p-4 text-center">
+                    {% if result %}
+                        <h3 class="card-title mb-4"><i class="bi bi-clipboard-data me-2"></i>Hasil Perhitungan</h3>
+                        
+                        <div class="bmi-value mb-3 {{ result.css_class }}">
+                            {{ result.bmi }}
+                        </div>
+                        
+                        <div class="category-box mb-4 {{ result.css_class }} bg-opacity-10">
+                            {{ result.category }}
+                        </div>
+                        
+                        <div class="alert alert-info text-start">
+                            <h5 class="alert-heading"><i class="bi bi-lightbulb me-2"></i>Saran Kesehatan</h5>
+                            <hr>
+                            <p class="mb-0">{{ result.advice }}</p>
+                        </div>
+                    {% else %}
+                        <div class="py-5">
+                            <i class="bi bi-graph-up display-1 text-muted mb-4"></i>
+                            <h4 class="text-muted mb-3">Belum Ada Hasil</h4>
+                            <p class="text-muted">Masukkan berat dan tinggi badan Anda untuk menghitung BMI</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- BMI Information -->
+    <div class="card mt-4 border-0">
+        <div class="card-body p-4">
+            <h3 class="card-title mb-4"><i class="bi bi-info-circle me-2"></i>Informasi Kategori BMI</h3>
+            
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-3">
+                    <div class="info-card bg-primary bg-opacity-10 border-primary">
+                        <div class="p-3">
+                            <h5 class="text-primary">Kekurangan Berat Badan</h5>
+                            <p class="mb-1"><strong>BMI < 18.5</strong></p>
+                            <p class="small mb-0">Berat badan di bawah normal. Perlu penambahan asupan nutrisi.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 col-lg-3">
+                    <div class="info-card bg-success bg-opacity-10 border-success">
+                        <div class="p-3">
+                            <h5 class="text-success">Normal (Ideal)</h5>
+                            <p class="mb-1"><strong>BMI 18.5 - 24.9</strong></p>
+                            <p class="small mb-0">Berat badan ideal! Pertahankan pola hidup sehat.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 col-lg-3">
+                    <div class="info-card bg-warning bg-opacity-10 border-warning">
+                        <div class="p-3">
+                            <h5 class="text-warning">Kelebihan BB</h5>
+                            <p class="mb-1"><strong>BMI 25 - 29.9</strong></p>
+                            <p class="small mb-0">Berat badan berlebih. Mulai kurangi asupan kalori.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 col-lg-3">
+                    <div class="info-card bg-danger bg-opacity-10 border-danger">
+                        <div class="p-3">
+                            <h5 class="text-danger">Obesitas</h5>
+                            <p class="mb-1"><strong>BMI ≥ 30</strong></p>
+                            <p class="small mb-0">Konsultasi dengan dokter untuk program penurunan BB.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Important Note -->
+            <div class="alert alert-warning mt-4">
+                <h5 class="alert-heading"><i class="bi bi-exclamation-triangle me-2"></i>Catatan Penting</h5>
+                <p class="mb-0">
+                    BMI adalah indikator umum untuk mengukur berat badan ideal. Namun, BMI tidak memperhitungkan faktor lain seperti massa otot, kepadatan tulang, komposisi tubuh secara keseluruhan, dan jenis kelamin. Untuk penilaian kesehatan yang lebih akurat, konsultasikan dengan dokter atau ahli gizi.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,181 @@
+{% extends 'base.html' %}
+
+{% block extra_css %}
+<style>
+    .hero-section {
+        background: var(--primary-gradient);
+        color: white;
+        padding: 5rem 0;
+        border-radius: 15px;
+        margin-bottom: 3rem;
+    }
+    
+    .produk-card {
+        transition: transform 0.3s, box-shadow 0.3s;
+        border: none;
+        border-radius: 12px;
+        overflow: hidden;
+        height: 100%;
+    }
+    
+    .produk-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+    }
+    
+    .produk-img {
+        height: 200px;
+        object-fit: cover;
+        width: 100%;
+        background: linear-gradient(135deg, #e0e7ff 0%, #f3e8ff 100%);
+        position: relative;
+    }
+    
+    .produk-img::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.3));
+    }
+    
+    .produk-img::after {
+        content: '💊';
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        font-size: 2rem;
+        opacity: 0.8;
+    }
+    
+    .bmi-cta {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+        border-radius: 15px;
+        padding: 2.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section text-center">
+    <div class="container">
+        <h1 class="display-3 fw-bold mb-3">Selamat Datang di Apotek Online</h1>
+        <p class="lead fs-4 mb-4">Belanja obat dan produk kesehatan dengan mudah dan aman</p>
+        <a href="{% url 'produk_list' %}" class="btn btn-light btn-lg px-5 py-3">
+            <i class="bi bi-cart-plus me-2"></i>Mulai Belanja
+        </a>
+    </div>
+</section>
+
+<!-- BMI CTA -->
+<div class="container mb-5">
+    <div class="bmi-cta">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h2 class="display-6 fw-bold mb-2"><i class="bi bi-calculator me-3"></i>Cek BMI Anda Sekarang!</h2>
+                <p class="fs-5 mb-0">Hitung Indeks Massa Tubuh dan ketahui status kesehatan Anda</p>
+            </div>
+            <div class="col-lg-4 text-lg-end">
+                <a href="{% url 'bmi_calculator' %}" class="btn btn-outline-light btn-lg px-5">
+                    Hitung BMI <i class="bi bi-arrow-right ms-2"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Produk Terlaris -->
+<section class="container mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold"><i class="bi bi-fire me-2"></i>Produk Terlaris</h2>
+        <a href="{% url 'produk_list' %}" class="btn btn-outline-primary">
+            Lihat Semua <i class="bi bi-arrow-right ms-1"></i>
+        </a>
+    </div>
+    
+    <div class="row g-4">
+        {% for produk in produk_list|slice:":6" %}
+        <div class="col-xl-4 col-lg-6 col-md-6">
+            <div class="produk-card card">
+                <div class="produk-img" style="background-image: url('{{ produk.gambar }}');"></div>
+                <div class="card-body">
+                    <span class="badge bg-primary mb-2">{{ produk.kategori }}</span>
+                    <h5 class="card-title">{{ produk.nama }}</h5>
+                    <p class="card-text text-muted small mb-3">Stok: {{ produk.stok }}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="text-success mb-0">Rp {{ produk.harga|floatformat:0 }}</h4>
+                        <a href="{% url 'produk_detail' produk.id %}" class="btn btn-primary">
+                            <i class="bi bi-eye me-1"></i>Detail
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <i class="bi bi-capsule display-1 text-muted mb-3"></i>
+            <h4 class="text-muted">Belum ada produk tersedia</h4>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="container mb-5">
+    <h2 class="text-center mb-4 fw-bold">Kenapa Harus Apotek Online?</h2>
+    
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card h-100 border-0 text-center p-4">
+                <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex p-3 mb-3">
+                    <i class="bi bi-shield-check display-4 text-primary"></i>
+                </div>
+                <h4 class="card-title">Terpercaya & Resmi</h4>
+                <p class="card-text">Produk dengan izin edar BPOM dan sertifikasi resmi</p>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card h-100 border-0 text-center p-4">
+                <div class="bg-success bg-opacity-10 rounded-circle d-inline-flex p-3 mb-3">
+                    <i class="bi bi-truck display-4 text-success"></i>
+                </div>
+                <h4 class="card-title">Pengiriman Cepat</h4>
+                <p class="card-text">Gratis ongkir untuk pembelian di atas Rp 100.000</p>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card h-100 border-0 text-center p-4">
+                <div class="bg-purple bg-opacity-10 rounded-circle d-inline-flex p-3 mb-3">
+                    <i class="bi bi-chat-dots display-4" style="color: #764ba2;"></i>
+                </div>
+                <h4 class="card-title">Konsultasi Gratis</h4>
+                <p class="card-text">Farmasis berpengalaman siap membantu 24/7</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<div class="container text-center mb-5">
+    <div class="card border-primary border-2">
+        <div class="card-body py-5">
+            <h3 class="card-title display-6 fw-bold mb-3">Siap Memulai Perjalanan Sehat Anda?</h3>
+            <p class="card-text fs-5 mb-4">Bergabung dengan ribuan pelanggan yang telah mempercayakan kesehatan mereka pada kami</p>
+            <div class="d-flex flex-column flex-md-row justify-content-center gap-3">
+                <a href="{% url 'produk_list' %}" class="btn btn-primary btn-lg px-5">
+                    <i class="bi bi-cart-plus me-2"></i>Belanja Sekarang
+                </a>
+                <a href="{% url 'about_us' %}" class="btn btn-outline-primary btn-lg px-5">
+                    <i class="bi bi-info-circle me-2"></i>Tentang Kami
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

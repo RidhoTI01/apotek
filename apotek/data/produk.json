@@ -1,0 +1,65 @@
+[
+  {
+    "id": 1,
+    "nama": "Paracetamol 500mg",
+    "kategori": "Obat Bebas",
+    "harga": 15000,
+    "stok": 100,
+    "deskripsi": "Obat pereda demam dan nyeri",
+    "gambar": "../static/images_produk/paracetamol.jpg"
+  },
+  {
+    "id": 2,
+    "nama": "Amoxicillin 500mg",
+    "kategori": "Obat Keras",
+    "harga": 50000,
+    "stok": 50,
+    "deskripsi": "Antibiotik untuk infeksi bakteri",
+    "gambar": "../static/images_produk/amoxicilin.jpg"
+  },
+  {
+    "id": 3,
+    "nama": "Vitamin C 1000mg",
+    "kategori": "Suplemen",
+    "harga": 35000,
+    "stok": 200,
+    "deskripsi": "Suplemen vitamin C untuk daya tahan tubuh",
+    "gambar": "../static/images_produk/vitamin.jpg"
+  },
+  {
+    "id": 4,
+    "nama": "Betadine Solution 30ml",
+    "kategori": "Obat Luar",
+    "harga": 25000,
+    "stok": 75,
+    "deskripsi": "Antiseptik untuk luka luar",
+    "gambar": "../static/images_produk/betadine.jpg"
+  },
+  {
+    "id": 5,
+    "nama": "Obat Batuk Hitam 60ml",
+    "kategori": "Obat Bebas",
+    "harga": 18000,
+    "stok": 120,
+    "deskripsi": "Obat batuk berdahak",
+    "gambar": "../static/images_produk/obatbatuk.jpg"
+  },
+  {
+    "id": 6,
+    "nama": "Panadol",
+    "kategori": "Obat Bebas",
+    "harga": 5000,
+    "stok": 123,
+    "deskripsi": "Obat untuk sakit kepala dan demam",
+    "gambar": "../static/images_produk/panadol.jpg"
+  },
+  {
+    "id": 7,
+    "nama": "Tolak Angin",
+    "kategori": "Obat Tradisional",
+    "harga": 5000,
+    "stok": 20,
+    "deskripsi": "Obat untuk sakit kepala dan demam",
+    "gambar": "../static/images_produk/tolakangin.jpg"
+  }
+]

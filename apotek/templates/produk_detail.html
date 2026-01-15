@@ -1,0 +1,253 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ produk.nama }} - Apotek Online{% endblock %}
+
+{% block extra_css %}
+<style>
+    .produk-detail-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        overflow: hidden;
+    }
+    
+    .produk-img-large {
+        height: 500px;
+        object-fit: cover;
+        width: 100%;
+        background: linear-gradient(135deg, #e0e7ff 0%, #f3e8ff 100%);
+        position: relative;
+    }
+    
+    .produk-img-large::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.3));
+    }
+    
+    .badge-kategori {
+        font-size: 1rem;
+        padding: 0.5rem 1.5rem;
+    }
+    
+    .harga-display {
+        font-size: 2.5rem;
+    }
+    
+    .description-box {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 2rem;
+    }
+    
+    .stock-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Beranda</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'produk_list' %}">Produk</a></li>
+            <li class="breadcrumb-item active">{{ produk.nama }}</li>
+        </ol>
+    </nav>
+    
+    <div class="row g-4">
+        <!-- Product Image -->
+        <div class="col-lg-6">
+            <div class="produk-detail-card">
+                <div class="produk-img-large" style="background-image: url('{{ produk.gambar }}');">
+                    <div class="position-absolute top-0 end-0 m-3">
+                        <span class="badge bg-success fs-6 p-3">
+                            <i class="bi bi-check-circle me-1"></i>BPOM Certified
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Product Info -->
+        <div class="col-lg-6">
+            <div class="card border-0">
+                <div class="card-body">
+                    <!-- Category & Stock -->
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <span class="badge badge-kategori bg-primary">
+                            {{ produk.kategori }}
+                        </span>
+                        <div class="stock-badge">
+                            {% if produk.stok > 10 %}
+                            <span class="badge bg-success p-2">
+                                <i class="bi bi-check-circle me-1"></i>Tersedia
+                            </span>
+                            {% elif produk.stok > 0 %}
+                            <span class="badge bg-warning p-2">
+                                <i class="bi bi-exclamation-triangle me-1"></i>Hampir Habis
+                            </span>
+                            {% else %}
+                            <span class="badge bg-danger p-2">
+                                <i class="bi bi-x-circle me-1"></i>Stok Habis
+                            </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- Product Name -->
+                    <h1 class="display-5 fw-bold mb-3">{{ produk.nama }}</h1>
+                    
+                    <!-- Price -->
+                    <div class="mb-4">
+                        <div class="harga-display text-success fw-bold mb-1">
+                            Rp {{ produk.harga|floatformat:0 }}
+                        </div>
+                        <small class="text-muted">Termasuk pajak</small>
+                    </div>
+                    
+                    <!-- Stock Info -->
+                    <div class="alert alert-info mb-4">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-box-seam display-6 me-3"></i>
+                            <div>
+                                <h5 class="mb-1">Stok Tersedia</h5>
+                                <p class="mb-0">{{ produk.stok }} unit tersedia</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="d-grid gap-3 mb-4">
+                        {% if produk.stok > 0 %}
+                        <a href="{% url 'tambah_keranjang' produk.id %}" class="btn btn-primary btn-lg py-3">
+                            <i class="bi bi-cart-plus me-2"></i>Tambah ke Keranjang
+                        </a>
+                        {% else %}
+                        <button class="btn btn-secondary btn-lg py-3" disabled>
+                            <i class="bi bi-cart-x me-2"></i>Stok Habis
+                        </button>
+                        {% endif %}
+                        
+                        <div class="d-flex gap-2">
+                            <a href="{% url 'produk_list' %}" class="btn btn-outline-primary flex-fill">
+                                <i class="bi bi-arrow-left me-2"></i>Kembali ke Produk
+                            </a>
+                            <a href="{% url 'keranjang' %}" class="btn btn-outline-success flex-fill">
+                                <i class="bi bi-cart3 me-2"></i>Lihat Keranjang
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Info -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <div class="card border-0 bg-light h-100">
+                                <div class="card-body text-center">
+                                    <i class="bi bi-truck display-5 text-primary mb-3"></i>
+                                    <h6 class="card-title">Gratis Ongkir</h6>
+                                    <p class="card-text small text-muted mb-0">Pembelian di atas Rp 100.000</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card border-0 bg-light h-100">
+                                <div class="card-body text-center">
+                                    <i class="bi bi-shield-check display-5 text-success mb-3"></i>
+                                    <h6 class="card-title">Garansi</h6>
+                                    <p class="card-text small text-muted mb-0">Garansi 3 hari pengembalian</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Description & Details -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card border-0">
+                <div class="card-body p-4">
+                    <ul class="nav nav-tabs mb-4" id="detailTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="desc-tab" data-bs-toggle="tab" 
+                                    data-bs-target="#desc" type="button" role="tab">
+                                <i class="bi bi-file-text me-2"></i>Deskripsi
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="detail-tab" data-bs-toggle="tab" 
+                                    data-bs-target="#detail" type="button" role="tab">
+                                <i class="bi bi-info-circle me-2"></i>Detail
+                            </button>
+                        </li>
+                    </ul>
+                    
+                    <div class="tab-content" id="detailTabContent">
+                        <div class="tab-pane fade show active" id="desc" role="tabpanel">
+                            <div class="description-box">
+                                <h4 class="mb-3">Deskripsi Produk</h4>
+                                <p class="lead">{{ produk.deskripsi }}</p>
+                            </div>
+                        </div>
+                        
+                        <div class="tab-pane fade" id="detail" role="tabpanel">
+                            <div class="description-box">
+                                <h4 class="mb-3">Informasi Detail</h4>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <table class="table">
+                                            <tbody>
+                                                <tr>
+                                                    <th><i class="bi bi-tag me-2"></i>Kategori</th>
+                                                    <td>{{ produk.kategori }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th><i class="bi bi-box me-2"></i>Stok</th>
+                                                    <td>{{ produk.stok }} unit</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <table class="table">
+                                            <tbody>
+                                                <tr>
+                                                    <th><i class="bi bi-currency-dollar me-2"></i>Harga</th>
+                                                    <td>Rp {{ produk.harga|floatformat:0 }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th><i class="bi bi-card-checklist me-2"></i>Status</th>
+                                                    <td>
+                                                        {% if produk.stok > 10 %}
+                                                            <span class="badge bg-success">Tersedia</span>
+                                                        {% elif produk.stok > 0 %}
+                                                            <span class="badge bg-warning">Terbatas</span>
+                                                        {% else %}
+                                                            <span class="badge bg-danger">Habis</span>
+                                                        {% endif %}
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

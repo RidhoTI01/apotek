@@ -1,0 +1,38 @@
+[
+  {
+    "id": 1,
+    "nama": "Zaki Ikbar Standing, S.kom",
+    "alamat": "asdasdasdasd",
+    "telepon": "088",
+    "items": [
+      {
+        "produk_id": 3,
+        "nama": "Vitamin C 1000mg",
+        "qty": 1,
+        "harga": 35000,
+        "subtotal": 35000
+      }
+    ],
+    "total": 35000,
+    "status": "Pending",
+    "tanggal": "2025-12-30 14:41:12"
+  },
+  {
+    "id": 2,
+    "nama": "h8hu8",
+    "alamat": "uhu8u8",
+    "telepon": "juuj",
+    "items": [
+      {
+        "produk_id": 2,
+        "nama": "Amoxicillin 500mg",
+        "qty": 1,
+        "harga": 50000,
+        "subtotal": 50000
+      }
+    ],
+    "total": 50000,
+    "status": "Pending",
+    "tanggal": "2026-01-12 10:06:31"
+  }
+]

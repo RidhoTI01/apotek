@@ -1,0 +1,345 @@
+{% extends 'base.html' %}
+
+{% block title %}Manajemen Produk - Dashboard{% endblock %}
+
+{% block extra_css %}
+<style>
+    .product-card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        transition: transform 0.3s;
+        height: 100%;
+    }
+    
+    .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+    }
+    
+    .product-img {
+        height: 180px;
+        object-fit: cover;
+        width: 100%;
+        border-radius: 12px 12px 0 0;
+        background: linear-gradient(135deg, #e0e7ff 0%, #f3e8ff 100%);
+    }
+    
+    .stock-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 0.8rem;
+    }
+    
+    .category-badge {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        font-size: 0.8rem;
+    }
+    
+    .price-tag {
+        font-size: 1.25rem;
+        font-weight: 700;
+    }
+    
+    .action-buttons {
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+    
+    .product-card:hover .action-buttons {
+        opacity: 1;
+    }
+    
+    .empty-state {
+        padding: 4rem 1rem;
+    }
+    
+    .search-box {
+        max-width: 400px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="display-5 fw-bold"><i class="bi bi-capsule me-3"></i>Manajemen Produk</h1>
+        <p class="text-muted">Kelola katalog produk apotek online</p>
+    </div>
+    <a href="{% url 'dashboard_produk_tambah' %}" class="btn btn-primary btn-lg">
+        <i class="bi bi-plus-circle me-2"></i>Tambah Produk
+    </a>
+</div>
+
+<!-- Navigation -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+        <div class="d-flex flex-wrap gap-2 justify-content-center">
+            <a href="{% url 'dashboard' %}" class="btn btn-outline-primary">
+                <i class="bi bi-speedometer2 me-2"></i>Dashboard
+            </a>
+            <a href="{% url 'dashboard_produk' %}" class="btn btn-success">
+                <i class="bi bi-capsule me-2"></i>Produk
+            </a>
+            <a href="{% url 'dashboard_kategori' %}" class="btn btn-outline-warning">
+                <i class="bi bi-folder me-2"></i>Kategori
+            </a>
+            <a href="{% url 'dashboard_pesanan' %}" class="btn btn-outline-info">
+                <i class="bi bi-box me-2"></i>Pesanan
+            </a>
+            <a href="{% url 'home' %}" class="btn btn-outline-secondary">
+                <i class="bi bi-globe me-2"></i>Website
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Stats Overview -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card border-primary border-2">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted mb-2">Total Produk</h6>
+                        <h2 class="fw-bold text-primary">{{ produk_list|length }}</h2>
+                    </div>
+                    <div class="bg-primary bg-opacity-10 rounded-circle p-3">
+                        <i class="bi bi-box display-5 text-primary"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card border-success border-2">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted mb-2">Total Stok</h6>
+                        <h2 class="fw-bold text-success">
+                            {% with total_stok=0 %}
+                                {% for p in produk_list %}
+                                    {% with total_stok=total_stok|add:p.stok %}
+                                    {% endwith %}
+                                {% endfor %}
+                                {{ total_stok }}
+                            {% endwith %}
+                        </h2>
+                    </div>
+                    <div class="bg-success bg-opacity-10 rounded-circle p-3">
+                        <i class="bi bi-check-circle display-5 text-success"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card border-warning border-2">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted mb-2">Rata-rata Harga</h6>
+                        <h3 class="fw-bold text-warning">
+                            {% if produk_list %}
+                                {% with total_harga=0 %}
+                                    {% for p in produk_list %}
+                                        {% with total_harga=total_harga|add:p.harga %}
+                                        {% endwith %}
+                                    {% endfor %}
+                                    Rp {{ total_harga|floatformat:0 }}
+                                {% endwith %}
+                            {% else %}
+                                Rp 0
+                            {% endif %}
+                        </h3>
+                    </div>
+                    <div class="bg-warning bg-opacity-10 rounded-circle p-3">
+                        <i class="bi bi-cash display-5 text-warning"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card border-info border-2">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted mb-2">Total Kategori</h6>
+                        <h2 class="fw-bold text-info">
+                            {% with categories=0 %}
+                                {% for p in produk_list %}
+                                    {% if p.kategori %}
+                                        {% with categories=categories|add:1 %}
+                                        {% endwith %}
+                                    {% endif %}
+                                {% endfor %}
+                                {{ categories }}
+                            {% endwith %}
+                        </h2>
+                    </div>
+                    <div class="bg-info bg-opacity-10 rounded-circle p-3">
+                        <i class="bi bi-tags display-5 text-info"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Search and Filter -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+        <div class="row align-items-center">
+            <div class="col-md-6 mb-3 mb-md-0">
+                <div class="input-group search-box">
+                    <span class="input-group-text bg-light border-end-0">
+                        <i class="bi bi-search text-muted"></i>
+                    </span>
+                    <input type="text" class="form-control border-start-0" 
+                           placeholder="Cari produk...">
+                    <button class="btn btn-outline-primary" type="button">
+                        <i class="bi bi-funnel"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="d-flex flex-wrap gap-2 justify-content-md-end">
+                    <select class="form-select w-auto">
+                        <option selected>Semua Kategori</option>
+                        {% for kat in kategori_list %}
+                        <option value="{{ kat.nama }}">{{ kat.nama }}</option>
+                        {% endfor %}
+                    </select>
+                    <select class="form-select w-auto">
+                        <option selected>Urutkan</option>
+                        <option value="name">Nama A-Z</option>
+                        <option value="price-low">Harga Terendah</option>
+                        <option value="price-high">Harga Tertinggi</option>
+                        <option value="stock">Stok Terbanyak</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Products Grid -->
+{% if produk_list %}
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
+    {% for produk in produk_list %}
+    <div class="col">
+        <div class="product-card card h-100">
+            <!-- Product Image -->
+            <div class="position-relative">
+                <div class="product-img" style="background-image: url('{{ produk.gambar }}');"></div>
+                
+                <!-- Stock Badge -->
+                {% if produk.stok > 10 %}
+                <span class="stock-badge badge bg-success">
+                    <i class="bi bi-check-circle me-1"></i>Stok: {{ produk.stok }}
+                </span>
+                {% elif produk.stok > 0 %}
+                <span class="stock-badge badge bg-warning">
+                    <i class="bi bi-exclamation-triangle me-1"></i>Stok: {{ produk.stok }}
+                </span>
+                {% else %}
+                <span class="stock-badge badge bg-danger">
+                    <i class="bi bi-x-circle me-1"></i>Habis
+                </span>
+                {% endif %}
+                
+                <!-- Category Badge -->
+                <span class="category-badge badge bg-primary">
+                    {{ produk.kategori }}
+                </span>
+            </div>
+            
+            <!-- Product Info -->
+            <div class="card-body">
+                <h5 class="card-title">{{ produk.nama|truncatechars:40 }}</h5>
+                <p class="card-text text-muted small mb-3">
+                    {{ produk.deskripsi|truncatechars:80 }}
+                </p>
+                
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="price-tag text-success">Rp {{ produk.harga|floatformat:0 }}</div>
+                        <small class="text-muted">ID: #{{ produk.id }}</small>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="action-buttons">
+                        <div class="btn-group" role="group">
+                            <a href="{% url 'produk_detail' produk.id %}" 
+                               class="btn btn-sm btn-outline-info" 
+                               title="Lihat Detail">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            <a href="{% url 'dashboard_produk_edit' produk.id %}" 
+                               class="btn btn-sm btn-outline-warning" 
+                               title="Edit">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <a href="{% url 'dashboard_produk_hapus' produk.id %}" 
+                               class="btn btn-sm btn-outline-danger" 
+                               title="Hapus"
+                               onclick="return confirm('Hapus produk {{ produk.nama }}?')">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<!-- Empty State -->
+<div class="card border-0 shadow-sm">
+    <div class="card-body text-center empty-state">
+        <div class="bg-light rounded-circle d-inline-flex p-4 mb-4">
+            <i class="bi bi-capsule display-1 text-muted"></i>
+        </div>
+        <h3 class="text-muted mb-3">Belum Ada Produk</h3>
+        <p class="text-muted mb-4">
+            Tambahkan produk pertama Anda untuk mulai berjualan
+        </p>
+        <a href="{% url 'dashboard_produk_tambah' %}" class="btn btn-primary btn-lg">
+            <i class="bi bi-plus-circle me-2"></i>Tambah Produk Pertama
+        </a>
+    </div>
+</div>
+{% endif %}
+
+<!-- Bottom Navigation -->
+<div class="card border-0 shadow-sm mt-5">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <small class="text-muted">
+                    <i class="bi bi-info-circle me-1"></i>
+                    Menampilkan {{ produk_list|length }} produk
+                </small>
+            </div>
+            <div>
+                <a href="{% url 'dashboard_kategori_tambah' %}" class="btn btn-outline-warning btn-sm me-2">
+                    <i class="bi bi-folder-plus me-1"></i>Tambah Kategori
+                </a>
+                <a href="{% url 'dashboard_produk_tambah' %}" class="btn btn-primary btn-sm">
+                    <i class="bi bi-plus-circle me-1"></i>Tambah Produk
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

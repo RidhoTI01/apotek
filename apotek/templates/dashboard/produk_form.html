@@ -1,0 +1,315 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if produk %}Edit{% else %}Tambah{% endif %} Produk - Dashboard{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        overflow: hidden;
+    }
+    
+    .form-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2rem;
+        text-align: center;
+    }
+    
+    .form-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        margin: 0 auto 1rem;
+    }
+    
+    .image-preview {
+        width: 100%;
+        height: 200px;
+        border-radius: 10px;
+        background: #f8f9fa;
+        background-size: cover;
+        background-position: center;
+        border: 2px dashed #dee2e6;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #6c757d;
+        transition: all 0.3s;
+        margin-top: 1rem;
+    }
+    
+    .image-preview.has-image {
+        border-color: #28a745;
+        background-color: #d4edda;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.25);
+    }
+    
+    .preview-actions {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        z-index: 2;
+    }
+    
+    .image-container {
+        position: relative;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Navigation -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+        <div class="d-flex flex-wrap gap-2 justify-content-center">
+            <a href="{% url 'dashboard' %}" class="btn btn-outline-primary">
+                <i class="bi bi-speedometer2 me-2"></i>Dashboard
+            </a>
+            <a href="{% url 'dashboard_produk' %}" class="btn btn-outline-success">
+                <i class="bi bi-capsule me-2"></i>Produk
+            </a>
+            <a href="{% url 'dashboard_kategori' %}" class="btn btn-outline-warning">
+                <i class="bi bi-folder me-2"></i>Kategori
+            </a>
+            <a href="{% url 'dashboard_pesanan' %}" class="btn btn-outline-info">
+                <i class="bi bi-box me-2"></i>Pesanan
+            </a>
+            <a href="{% url 'home' %}" class="btn btn-outline-secondary">
+                <i class="bi bi-globe me-2"></i>Website
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Form Container -->
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="form-card card">
+            <!-- Form Header -->
+            <div class="form-header">
+                <div class="form-icon">
+                    <i class="bi {% if produk %}bi-pencil-square{% else %}bi-plus-circle{% endif %}"></i>
+                </div>
+                <h3 class="mb-2">
+                    {% if produk %}Edit{% else %}Tambah{% endif %} Produk
+                </h3>
+                <p class="mb-0 opacity-75">
+                    {% if produk %}Ubah informasi produk{% else %}Tambahkan produk baru ke katalog{% endif %}
+                </p>
+            </div>
+            
+            <!-- Form Body -->
+            <div class="card-body p-4 p-md-5">
+                <form method="POST" id="produkForm">
+                    {% csrf_token %}
+                    
+                    <!-- Product Name -->
+                    <div class="mb-4">
+                        <label for="nama" class="form-label fw-semibold">
+                            <i class="bi bi-tag me-2"></i>Nama Produk *
+                        </label>
+                        <input type="text" class="form-control form-control-lg" 
+                               id="nama" name="nama" 
+                               value="{% if produk %}{{ produk.nama }}{% endif %}" 
+                               placeholder="Contoh: Paracetamol 500mg" 
+                               required>
+                        <div class="form-text">
+                            Masukkan nama produk yang jelas dan deskriptif
+                        </div>
+                    </div>
+                    
+                    <!-- Category & Price -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label for="kategori" class="form-label fw-semibold">
+                                <i class="bi bi-folder me-2"></i>Kategori *
+                            </label>
+                            <select class="form-select" id="kategori" name="kategori" required>
+                                <option value="">Pilih Kategori</option>
+                                {% for kat in kategori_list %}
+                                <option value="{{ kat.nama }}" 
+                                        {% if produk.kategori == kat.nama %}selected{% endif %}>
+                                    {{ kat.nama }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="harga" class="form-label fw-semibold">
+                                <i class="bi bi-currency-dollar me-2"></i>Harga *
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light">Rp</span>
+                                <input type="number" class="form-control" 
+                                       id="harga" name="harga" 
+                                       value="{% if produk %}{{ produk.harga }}{% endif %}" 
+                                       placeholder="50000" 
+                                       min="100" 
+                                       required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Stock -->
+                    <div class="mb-4">
+                        <label for="stok" class="form-label fw-semibold">
+                            <i class="bi bi-box me-2"></i>Stok *
+                        </label>
+                        <input type="number" class="form-control" 
+                               id="stok" name="stok" 
+                               value="{% if produk %}{{ produk.stok }}{% endif %}" 
+                               placeholder="100" 
+                               min="0" 
+                               required>
+                        <div class="form-text">
+                            Masukkan jumlah stok yang tersedia
+                        </div>
+                    </div>
+                    
+                    <!-- Image URL -->
+                    <div class="mb-4">
+                        <label for="gambar" class="form-label fw-semibold">
+                            <i class="bi bi-image me-2"></i>URL Gambar Produk *
+                        </label>
+                        <input type="url" class="form-control" 
+                               id="gambar" name="gambar" 
+                               value="{% if produk %}{{ produk.gambar }}{% else %}https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80{% endif %}" 
+                               placeholder="https://example.com/gambar-produk.jpg" 
+                               required
+                               oninput="updatePreview(this.value)">
+                        <div class="form-text">
+                            Gunakan URL gambar dari Unsplash atau hosting gambar lainnya
+                        </div>
+                        
+                        <!-- Image Preview -->
+                        <div class="image-container mt-3">
+                            <div id="imagePreview" class="image-preview"
+                                {% if produk and produk.gambar %}
+                                style="background-image: url('{{ produk.gambar }}');"
+                                {% endif %}>
+                            <div class="preview-actions">
+                                <button type="button" class="btn btn-sm btn-outline-secondary" 
+                                        onclick="clearImage()">
+                                    <i class="bi bi-x-circle"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Description -->
+                    <div class="mb-5">
+                        <label for="deskripsi" class="form-label fw-semibold">
+                            <i class="bi bi-text-paragraph me-2"></i>Deskripsi Produk
+                        </label>
+                        <textarea class="form-control" id="deskripsi" name="deskripsi" 
+                                  rows="4" placeholder="Masukkan deskripsi produk...">{% if produk %}{{ produk.deskripsi }}{% endif %}</textarea>
+                        <div class="form-text">
+                            Deskripsi membantu pelanggan memahami produk Anda
+                        </div>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{% url 'dashboard_produk' %}" class="btn btn-outline-secondary btn-lg me-md-2">
+                            <i class="bi bi-x-circle me-2"></i>Batal
+                        </a>
+                        <button type="submit" class="btn {% if produk %}btn-warning{% else %}btn-success{% endif %} btn-lg">
+                            <i class="bi {% if produk %}bi-check-circle{% else %}bi-plus-circle{% endif %} me-2"></i>
+                            {% if produk %}Update Produk{% else %}Tambah Produk{% endif %}
+                        </button>
+                    </div>
+                </form>
+                
+                <!-- Form Tips -->
+                <div class="alert alert-light mt-4">
+                    <h6 class="alert-heading"><i class="bi bi-lightbulb me-2"></i>Tips Produk yang Baik:</h6>
+                    <ul class="mb-0">
+                        <li>Gambar produk harus jelas dan berkualitas tinggi</li>
+                        <li>Harga harus kompetitif dengan pasar</li>
+                        <li>Stok harus selalu diperbarui</li>
+                        <li>Deskripsi harus informatif dan lengkap</li>
+                        <li>Kategori harus sesuai dengan jenis produk</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Update image preview
+function updatePreview(url) {
+    const preview = document.getElementById('imagePreview');
+    if (url) {
+        preview.style.backgroundImage = `url('${url}')`;
+        preview.classList.add('has-image');
+        preview.innerHTML = '';
+    } else {
+        preview.style.backgroundImage = '';
+        preview.classList.remove('has-image');
+        preview.innerHTML = `
+            <div class="text-center">
+                <i class="bi bi-image display-4 mb-2"></i>
+                <p class="mb-0">Preview gambar akan muncul di sini</p>
+            </div>
+        `;
+    }
+}
+
+// Clear image
+function clearImage() {
+    document.getElementById('gambar').value = '';
+    updatePreview('');
+}
+
+// Form validation
+document.getElementById('produkForm').addEventListener('submit', function(e) {
+    const harga = document.getElementById('harga').value;
+    const stok = document.getElementById('stok').value;
+    const gambar = document.getElementById('gambar').value;
+    
+    if (parseInt(harga) <= 0) {
+        e.preventDefault();
+        alert('Harga harus lebih dari 0');
+        document.getElementById('harga').focus();
+        return false;
+    }
+    
+    if (parseInt(stok) < 0) {
+        e.preventDefault();
+        alert('Stok tidak boleh negatif');
+        document.getElementById('stok').focus();
+        return false;
+    }
+    
+    if (gambar && !gambar.startsWith('http')) {
+        e.preventDefault();
+        alert('URL gambar harus valid (dimulai dengan http:// atau https://)');
+        document.getElementById('gambar').focus();
+        return false;
+    }
+    
+    return true;
+});
+
+// Initialize preview on page load
+document.addEventListener('DOMContentLoaded', function() {
+    const imageUrl = document.getElementById('gambar').value;
+    if (imageUrl) {
+        updatePreview(imageUrl);
+    }
+});
+</script>
+{% endblock %}

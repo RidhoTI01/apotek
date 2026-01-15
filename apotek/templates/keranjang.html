@@ -1,0 +1,348 @@
+{% extends 'base.html' %}
+
+{% block title %}Keranjang Belanja - Apotek Online{% endblock %}
+
+{% block extra_css %}
+<style>
+    .cart-table td, .cart-table th {
+        vertical-align: middle;
+    }
+    
+    .item-img {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 8px;
+        background-color: #f8f9fa;
+    }
+    
+    .qty-control {
+        width: 100px;
+        text-align: center;
+    }
+    
+    .total-box {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border-radius: 15px;
+        padding: 2rem;
+    }
+    
+    .total-row {
+        border-bottom: 1px solid #dee2e6;
+        padding: 0.75rem 0;
+    }
+    
+    .empty-cart {
+        padding: 4rem 1rem;
+    }
+    
+    .free-shipping {
+        background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+        border: 2px dashed #10b981;
+    }
+    
+    .shipping-alert {
+        background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+        border-left: 4px solid #f59e0b;
+    }
+    
+    .manual-btn {
+        width: 40px;
+        height: 40px;
+        border: 1px solid #dee2e6;
+        background: white;
+        border-radius: 6px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        cursor: pointer;
+    }
+    
+    .manual-btn:hover {
+        background: #f8f9fa;
+        border-color: #667eea;
+    }
+    
+    .manual-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="fw-bold"><i class="bi bi-cart3 me-3"></i>Keranjang Belanja</h1>
+    {% if items %}
+    <span class="badge bg-primary fs-6">
+        {{ items|length }} item
+    </span>
+    {% endif %}
+</div>
+
+{% if items %}
+<div class="card border-0 shadow-sm">
+    <div class="card-body">
+        <!-- Cart Items Table -->
+        <div class="table-responsive">
+            <table class="table cart-table">
+                <thead class="table-primary">
+                    <tr>
+                        <th>Produk</th>
+                        <th class="text-center">Harga</th>
+                        <th class="text-center">Jumlah</th>
+                        <th class="text-center">Subtotal</th>
+                        <th class="text-center">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in items %}
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <img src="{{ item.produk.gambar }}" class="item-img me-3" alt="{{ item.produk.nama }}">
+                                <div>
+                                    <h6 class="mb-1">{{ item.produk.nama }}</h6>
+                                    <small class="text-muted d-block">{{ item.produk.kategori }}</small>
+                                    <small class="text-muted">Stok: {{ item.produk.stok }}</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="text-center">
+                            <h6 class="mb-0">Rp {{ item.produk.harga|floatformat:0 }}</h6>
+                        </td>
+                        <td class="text-center">
+                            <div class="d-flex flex-column align-items-center">
+                                <!-- Update Form -->
+                                <form method="POST" action="{% url 'update_keranjang' item.produk.id %}" class="mb-2">
+                                    {% csrf_token %}
+                                    <div class="input-group qty-control">
+                                        <input type="number" name="qty" value="{{ item.qty }}" 
+                                               min="1" max="{{ item.produk.stok }}" 
+                                               class="form-control text-center">
+                                        <button type="submit" class="btn btn-outline-primary btn-sm">
+                                            <i class="bi bi-check-lg"></i>
+                                        </button>
+                                    </div>
+                                </form>
+                                
+                                <!-- Manual Controls -->
+                                <div class="d-flex align-items-center gap-2">
+                                    <form method="POST" action="{% url 'update_keranjang' item.produk.id %}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="qty" value="{{ item.qty|add:'-1' }}">
+                                        <button type="submit" class="manual-btn" {% if item.qty <= 1 %}disabled{% endif %}>
+                                            -
+                                        </button>
+                                    </form>
+                                    
+                                    <span class="fw-bold">{{ item.qty }}</span>
+                                    
+                                    <form method="POST" action="{% url 'update_keranjang' item.produk.id %}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="qty" value="{{ item.qty|add:'1' }}">
+                                        <button type="submit" class="manual-btn" {% if item.qty >= item.produk.stok %}disabled{% endif %}>
+                                            +
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="text-center">
+                            <h6 class="text-success mb-0">Rp {{ item.subtotal|floatformat:0 }}</h6>
+                        </td>
+                        <td class="text-center">
+                            <div class="d-flex flex-column gap-2">
+                                <a href="{% url 'produk_detail' item.produk.id %}" class="btn btn-sm btn-outline-info">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <form method="POST" action="{% url 'update_keranjang' item.produk.id %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="qty" value="0">
+                                    <button type="submit" class="btn btn-sm btn-danger" 
+                                            onclick="return confirm('Hapus {{ item.produk.nama }} dari keranjang?')">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Cart Summary -->
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card border-0 mt-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="bi bi-info-circle me-2"></i>Informasi Penting</h5>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item border-0 px-0">
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                Produk dijamin asli dan bersertifikat BPOM
+                            </li>
+                            <li class="list-group-item border-0 px-0">
+                                <i class="bi bi-truck text-primary me-2"></i>
+                                Gratis ongkir untuk pembelian di atas Rp 100.000
+                            </li>
+                            <li class="list-group-item border-0 px-0">
+                                <i class="bi bi-clock text-warning me-2"></i>
+                                Pesanan diproses dalam 1-2 jam kerja
+                            </li>
+                            <li class="list-group-item border-0 px-0">
+                                <i class="bi bi-arrow-repeat text-info me-2"></i>
+                                Garansi pengembalian 3 hari setelah produk diterima
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4">
+                <div class="total-box mt-4">
+                    <h4 class="fw-bold mb-4">Ringkasan Belanja</h4>
+                    
+                    {% with total_qty=0 %}
+                        {% for item in items %}
+                            {% with total_qty=total_qty|add:item.qty %}
+                            {% endwith %}
+                        {% endfor %}
+                    {% endwith %}
+                    
+                    <div class="total-row d-flex justify-content-between">
+                        <span>Jumlah Produk</span>
+                        <span class="fw-bold">{{ total_qty }} item</span>
+                    </div>
+                    
+                    <div class="total-row d-flex justify-content-between">
+                        <span>Subtotal</span>
+                        <span>Rp {{ total|floatformat:0 }}</span>
+                    </div>
+                    
+                    <div class="total-row d-flex justify-content-between">
+                        <span>Biaya Pengiriman</span>
+                        <span>
+                            {% if total >= 100000 %}
+                                <span class="text-success fw-bold">Gratis</span>
+                            {% else %}
+                                Rp 15,000
+                            {% endif %}
+                        </span>
+                    </div>
+                    
+                    {% if total >= 100000 %}
+                    <div class="total-row d-flex justify-content-between text-success">
+                        <span><i class="bi bi-gift me-1"></i>Diskon Pengiriman</span>
+                        <span class="fw-bold">- Rp 15,000</span>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="pt-3 mt-3 border-top">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h4 class="mb-0">Total</h4>
+                            <h2 class="text-success mb-0">
+                                Rp 
+                                {% if total >= 100000 %}
+                                    {{ total|floatformat:0 }}
+                                {% else %}
+                                    {{ total|add:15000|floatformat:0 }}
+                                {% endif %}
+                            </h2>
+                        </div>
+                    </div>
+                    
+                    <!-- Checkout Button -->
+                    <div class="d-grid gap-2 mt-4">
+                        <a href="{% url 'checkout' %}" class="btn btn-success btn-lg">
+                            <i class="bi bi-bag-check me-2"></i>Lanjut ke Checkout
+                        </a>
+                        <a href="{% url 'produk_list' %}" class="btn btn-outline-primary">
+                            <i class="bi bi-arrow-left me-2"></i>Lanjutkan Belanja
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Free Shipping Alert -->
+{% if total < 100000 %}
+<div class="card shipping-alert mt-4">
+    <div class="card-body">
+        <div class="d-flex align-items-center">
+            <i class="bi bi-truck display-5 me-3 text-warning"></i>
+            <div>
+                <h5 class="mb-1">Gratis Ongkir!</h5>
+                <p class="mb-0">
+                    Tambah belanja <span class="fw-bold text-danger">Rp {{ 100000|add:total|floatformat:0 }}</span> 
+                    lagi untuk mendapatkan <span class="fw-bold text-success">gratis ongkir!</span>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="card free-shipping mt-4">
+    <div class="card-body text-center">
+        <h5 class="mb-2"><i class="bi bi-gift me-2"></i>Selamat! Anda Mendapatkan Gratis Ongkir</h5>
+        <p class="mb-0">Pesanan Anda sudah memenuhi syarat untuk pengiriman gratis</p>
+    </div>
+</div>
+{% endif %}
+
+{% else %}
+<!-- Empty Cart -->
+<div class="card border-0 shadow-sm">
+    <div class="card-body text-center empty-cart">
+        <i class="bi bi-cart-x display-1 text-muted mb-4"></i>
+        <h3 class="text-muted mb-3">Keranjang Belanja Kosong</h3>
+        <p class="text-muted mb-4">Tambahkan produk favorit Anda ke keranjang untuk mulai berbelanja</p>
+        <a href="{% url 'produk_list' %}" class="btn btn-primary btn-lg px-5">
+            <i class="bi bi-shop me-2"></i>Jelajahi Produk
+        </a>
+    </div>
+</div>
+{% endif %}
+
+<!-- Instructions -->
+{% if items %}
+<div class="card border-primary mt-4">
+    <div class="card-body">
+        <h5 class="card-title text-primary">
+            <i class="bi bi-question-circle me-2"></i>Panduan Keranjang Belanja
+        </h5>
+        <div class="row mt-3">
+            <div class="col-md-6">
+                <div class="d-flex mb-3">
+                    <div class="bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center me-3" 
+                         style="width: 40px; height: 40px;">
+                        <i class="bi bi-1-circle text-primary"></i>
+                    </div>
+                    <div>
+                        <h6>Ubah Jumlah</h6>
+                        <p class="text-muted small mb-0">Masukkan jumlah baru dan klik tombol centang atau gunakan tombol +/-</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="d-flex mb-3">
+                    <div class="bg-danger bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center me-3" 
+                         style="width: 40px; height: 40px;">
+                        <i class="bi bi-2-circle text-danger"></i>
+                    </div>
+                    <div>
+                        <h6>Hapus Produk</h6>
+                        <p class="text-muted small mb-0">Klik tombol trash untuk menghapus produk dari keranjang</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

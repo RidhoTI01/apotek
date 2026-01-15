@@ -1,0 +1,27 @@
+[
+  {
+    "id": 1,
+    "nama": "Obat Bebas",
+    "deskripsi": "Obat yang dapat dibeli tanpa resep dokter"
+  },
+  {
+    "id": 2,
+    "nama": "Obat Keras",
+    "deskripsi": "Obat yang memerlukan resep dokter"
+  },
+  {
+    "id": 3,
+    "nama": "Suplemen",
+    "deskripsi": "Suplemen dan vitamin kesehatan"
+  },
+  {
+    "id": 4,
+    "nama": "Obat Luar",
+    "deskripsi": "Obat untuk penggunaan luar seperti salep dan antiseptik"
+  },
+  {
+    "id": 5,
+    "nama": "Obat Tradisional",
+    "deskripsi": "Obat hasil lokal dan herbal"
+  }
+]

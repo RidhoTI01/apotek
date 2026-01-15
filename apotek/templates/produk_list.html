@@ -1,0 +1,207 @@
+{% extends 'base.html' %}
+
+{% block title %}Daftar Produk - Apotek Online{% endblock %}
+
+{% block extra_css %}
+<style>
+    .filter-btn.active {
+        background: var(--primary-color) !important;
+        color: white !important;
+    }
+    
+    .produk-card {
+        transition: transform 0.3s, box-shadow 0.3s;
+        border: none;
+        border-radius: 12px;
+        overflow: hidden;
+        height: 100%;
+    }
+    
+    .produk-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+    }
+    
+    .produk-img {
+        height: 200px;
+        object-fit: cover;
+        width: 100%;
+        background: linear-gradient(135deg, #e0e7ff 0%, #f3e8ff 100%);
+        position: relative;
+    }
+    
+    .produk-img::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.3));
+    }
+    
+    .stock-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        z-index: 2;
+    }
+    
+    .price-tag {
+        font-size: 1.5rem;
+    }
+    
+    .category-badge {
+        font-size: 0.9rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="display-5 fw-bold"><i class="bi bi-capsule me-3"></i>Daftar Produk</h1>
+        <p class="text-muted">Temukan produk kesehatan yang Anda butuhkan</p>
+    </div>
+    <a href="{% url 'keranjang' %}" class="btn btn-outline-primary position-relative">
+        <i class="bi bi-cart3 me-2"></i>Keranjang
+        {% with cart_items=request.session.keranjang %}
+            {% if cart_items %}
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                {{ cart_items|length }}
+            </span>
+            {% endif %}
+        {% endwith %}
+    </a>
+</div>
+
+<!-- Filter Section -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+        <h5 class="card-title mb-3"><i class="bi bi-funnel me-2"></i>Filter Kategori</h5>
+        
+        <div class="d-flex flex-wrap gap-2 mb-3">
+            <a href="{% url 'produk_list' %}" 
+               class="btn btn-outline-primary filter-btn {% if not kategori %}active{% endif %}">
+                <i class="bi bi-grid me-1"></i>Semua
+            </a>
+            
+            {% for kat in kategori_list %}
+            <a href="?kategori={{ kat.nama }}" 
+               class="btn btn-outline-primary filter-btn {% if kategori == kat.nama %}active{% endif %}">
+                {{ kat.nama }}
+            </a>
+            {% endfor %}
+        </div>
+        
+        {% if kategori %}
+        <div class="alert alert-info mb-0">
+            <i class="bi bi-info-circle me-2"></i>Menampilkan produk dari kategori: <strong>{{ kategori }}</strong>
+            <a href="{% url 'produk_list' %}" class="btn btn-sm btn-outline-info ms-3">
+                <i class="bi bi-x-circle me-1"></i>Hapus Filter
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Product Count -->
+<div class="mb-4">
+    <div class="alert alert-light border">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <i class="bi bi-clipboard-data me-2"></i>
+                Menampilkan <strong>{{ produk_list|length }}</strong> produk
+                {% if kategori %}dari kategori <strong>{{ kategori }}</strong>{% endif %}
+            </div>
+            <div class="text-muted small">
+                <i class="bi bi-exclamation-circle me-1"></i>
+                Klik produk untuk melihat detail
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Products Grid -->
+{% if produk_list %}
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+    {% for produk in produk_list %}
+    <div class="col">
+        <div class="produk-card card h-100">
+            <!-- Product Image -->
+            <div class="position-relative">
+                <div class="produk-img" style="background-image: url('{{ produk.gambar }}');"></div>
+                
+                <!-- Stock Badge -->
+                <span class="stock-badge badge {% if produk.stok > 10 %}bg-success{% elif produk.stok > 0 %}bg-warning{% else %}bg-danger{% endif %}">
+                    {% if produk.stok > 10 %}
+                        <i class="bi bi-check-circle me-1"></i>Tersedia
+                    {% elif produk.stok > 0 %}
+                        <i class="bi bi-exclamation-triangle me-1"></i>Terbatas
+                    {% else %}
+                        <i class="bi bi-x-circle me-1"></i>Habis
+                    {% endif %}
+                </span>
+                
+                <!-- Category Badge -->
+                <span class="position-absolute bottom-0 start-0 m-3 badge bg-primary category-badge">
+                    {{ produk.kategori }}
+                </span>
+            </div>
+            
+            <!-- Product Info -->
+            <div class="card-body">
+                <h5 class="card-title">{{ produk.nama }}</h5>
+                <p class="card-text text-muted small mb-3">
+                    {{ produk.deskripsi|truncatechars:100 }}
+                </p>
+                
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h4 class="text-success mb-0 price-tag">Rp {{ produk.harga|floatformat:0 }}</h4>
+                        <small class="text-muted">Stok: {{ produk.stok }}</small>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <a href="{% url 'produk_detail' produk.id %}" class="btn btn-primary btn-sm">
+                            <i class="bi bi-eye"></i>
+                        </a>
+                        {% if produk.stok > 0 %}
+                        <a href="{% url 'tambah_keranjang' produk.id %}" class="btn btn-success btn-sm">
+                            <i class="bi bi-cart-plus"></i>
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<!-- Empty State -->
+<div class="card border-0 shadow-sm">
+    <div class="card-body text-center py-5">
+        <i class="bi bi-search display-1 text-muted mb-4"></i>
+        <h3 class="text-muted mb-3">Produk Tidak Ditemukan</h3>
+        <p class="text-muted mb-4">
+            {% if kategori %}
+                Tidak ada produk dalam kategori <strong>{{ kategori }}</strong>
+            {% else %}
+                Belum ada produk yang tersedia
+            {% endif %}
+        </p>
+        <a href="{% url 'produk_list' %}" class="btn btn-primary">
+            <i class="bi bi-arrow-left me-2"></i>Lihat Semua Produk
+        </a>
+    </div>
+</div>
+{% endif %}
+
+<!-- Back to Top -->
+<div class="text-center mt-5">
+    <a href="#top" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-up-circle me-2"></i>Kembali ke Atas
+    </a>
+</div>
+{% endblock %}

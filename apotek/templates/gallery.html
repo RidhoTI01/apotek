@@ -1,0 +1,244 @@
+{% extends 'base.html' %}
+
+{% block title %}Gallery - Apotek Online{% endblock %}
+
+{% block extra_css %}
+<style>
+    .gallery-hero {
+        background: var(--primary-gradient);
+        color: white;
+        padding: 4rem 0;
+        border-radius: 15px;
+        margin-bottom: 3rem;
+    }
+    
+    .filter-btn.active {
+        background: var(--primary-color);
+        color: white;
+    }
+    
+    .gallery-card {
+        transition: transform 0.3s, box-shadow 0.3s;
+        border: none;
+        border-radius: 12px;
+        overflow: hidden;
+        height: 100%;
+    }
+    
+    .gallery-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+    }
+    
+    .gallery-img {
+        height: 200px;
+        object-fit: cover;
+        width: 100%;
+    }
+    
+    .video-container {
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
+    
+    .filter-btn {
+        transition: all 0.3s;
+    }
+    
+    .category-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        z-index: 2;
+        font-size: 0.75rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="gallery-hero text-center">
+    <div class="container">
+        <h1 class="display-4 fw-bold mb-3"><i class="bi bi-images me-3"></i>Gallery Apotek Online</h1>
+        <p class="lead">Lihat fasilitas, produk, dan aktivitas kami</p>
+    </div>
+</div>
+
+<!-- Filter Buttons -->
+<div class="container mb-5">
+    <div class="d-flex flex-wrap justify-content-center gap-2 mb-4">
+        <button class="btn btn-outline-primary filter-btn active" data-filter="all">
+            <i class="bi bi-grid me-1"></i>Semua
+        </button>
+        <button class="btn btn-outline-success filter-btn" data-filter="produk">
+            <i class="bi bi-capsule me-1"></i>Produk
+        </button>
+        <button class="btn btn-outline-warning filter-btn" data-filter="fasilitas">
+            <i class="bi bi-building me-1"></i>Fasilitas
+        </button>
+        <button class="btn btn-outline-info filter-btn" data-filter="tim">
+            <i class="bi bi-people me-1"></i>Tim Kami
+        </button>
+    </div>
+    
+    <!-- Gallery Grid -->
+    <div class="row g-4" id="galleryGrid">
+        <!-- Produk Images -->
+        <div class="col-lg-4 col-md-6" data-category="produk">
+            <div class="gallery-card card">
+                <span class="badge bg-success category-badge">Produk</span>
+                <img src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80" 
+                     class="gallery-img" alt="Paracetamol">
+                <div class="card-body">
+                    <h5 class="card-title">Paracetamol 500mg</h5>
+                    <p class="card-text text-muted">Obat pereda demam dan nyeri dengan kualitas terbaik</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4 col-md-6" data-category="produk">
+            <div class="gallery-card card">
+                <span class="badge bg-success category-badge">Produk</span>
+                <img src="https://images.unsplash.com/photo-1559757148-5c350d0d3c56?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80" 
+                     class="gallery-img" alt="Vitamin C">
+                <div class="card-body">
+                    <h5 class="card-title">Vitamin C 1000mg</h5>
+                    <p class="card-text text-muted">Suplemen daya tahan tubuh dengan kandungan optimal</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4 col-md-6" data-category="produk">
+            <div class="gallery-card card">
+                <span class="badge bg-success category-badge">Produk</span>
+                <img src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=60" 
+                     class="gallery-img" alt="Amoxicillin">
+                <div class="card-body">
+                    <h5 class="card-title">Amoxicillin 500mg</h5>
+                    <p class="card-text text-muted">Antibiotik untuk infeksi bakteri dengan resep dokter</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Fasilitas Images -->
+        <div class="col-lg-4 col-md-6" data-category="fasilitas">
+            <div class="gallery-card card">
+                <span class="badge bg-warning category-badge">Fasilitas</span>
+                <img src="https://images.unsplash.com/photo-1631549916768-4119b2e5f926?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80" 
+                     class="gallery-img" alt="Apotek Modern">
+                <div class="card-body">
+                    <h5 class="card-title">Apotek Modern</h5>
+                    <p class="card-text text-muted">Fasilitas apotek kami yang modern dan steril</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4 col-md-6" data-category="fasilitas">
+            <div class="gallery-card card">
+                <span class="badge bg-warning category-badge">Fasilitas</span>
+                <img src="https://images.unsplash.com/photo-1579684385127-1ef15d508118?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80" 
+                     class="gallery-img" alt="Area Konsultasi">
+                <div class="card-body">
+                    <h5 class="card-title">Area Konsultasi</h5>
+                    <p class="card-text text-muted">Ruang konsultasi dengan farmasis berpengalaman</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4 col-md-6" data-category="fasilitas">
+            <div class="gallery-card card">
+                <span class="badge bg-warning category-badge">Fasilitas</span>
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTF9ucbFqtsQhC5ZJ6V3WLKHYBnvO38b9K4_A&s" 
+                     class="gallery-img" alt="Gudang Steril">
+                <div class="card-body">
+                    <h5 class="card-title">Gudang Steril</h5>
+                    <p class="card-text text-muted">Penyimpanan produk dengan standar tinggi</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tim Images -->
+        <div class="col-lg-4 col-md-6" data-category="tim">
+            <div class="gallery-card card">
+                <span class="badge bg-info category-badge">Tim</span>
+                <img src="https://images.unsplash.com/photo-1551601651-2a8555f1a136?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80" 
+                     class="gallery-img" alt="Tim Farmasis">
+                <div class="card-body">
+                    <h5 class="card-title">Tim Farmasis</h5>
+                    <p class="card-text text-muted">Farmasis profesional siap membantu Anda</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4 col-md-6" data-category="tim">
+            <div class="gallery-card card">
+                <span class="badge bg-info category-badge">Tim</span>
+                <img src="https://www.kimiafarmaapotek.co.id/wp-content/uploads/2021/10/homepage-images-aboutus-1024x724.jpg" 
+                     class="gallery-img" alt="Customer Service">
+                <div class="card-body">
+                    <h5 class="card-title">Customer Service</h5>
+                    <p class="card-text text-muted">Tim layanan pelanggan 24/7</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4 col-md-6" data-category="tim">
+            <div class="gallery-card card">
+                <span class="badge bg-info category-badge">Tim</span>
+                <img src="https://images.unsplash.com/photo-1582750433449-648ed127bb54?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80" 
+                     class="gallery-img" alt="Tim Pengiriman">
+                <div class="card-body">
+                    <h5 class="card-title">Tim Pengiriman</h5>
+                    <p class="card-text text-muted">Kurir berpengalaman untuk pengiriman cepat</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Video Section -->
+<div class="container mb-5">
+    <h2 class="text-center mb-4 fw-bold"><i class="bi bi-play-circle me-2"></i>Video Profil Apotek Online</h2>
+    
+    <div class="video-container">
+        <div class="ratio ratio-16x9">
+            <iframe 
+                src="https://www.youtube.com/embed/dQw4w9WgXcQ" 
+                title="Profil Apotek Online"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                allowfullscreen>
+            </iframe>
+        </div>
+    </div>
+</div>
+
+<script>
+// Simple filter function without JS for Bootstrap - using data attributes and CSS
+document.addEventListener('DOMContentLoaded', function() {
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const galleryItems = document.querySelectorAll('[data-category]');
+    
+    filterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Remove active class from all buttons
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            
+            // Add active class to clicked button
+            this.classList.add('active');
+            
+            const filter = this.getAttribute('data-filter');
+            
+            // Show/hide items based on filter
+            galleryItems.forEach(item => {
+                if (filter === 'all' || item.getAttribute('data-category') === filter) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+    });
+});
+</script>
+{% endblock %}

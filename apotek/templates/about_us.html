@@ -1,0 +1,177 @@
+{% extends 'base.html' %}
+
+{% block title %}About Us - Apotek Online{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hero-section {
+        background: var(--primary-gradient);
+        color: white;
+        padding: 5rem 0;
+        margin-bottom: 3rem;
+        border-radius: 15px;
+    }
+    
+    .team-card {
+        transition: transform 0.3s, box-shadow 0.3s;
+        border: none;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+    
+    .team-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    }
+    
+    .team-img {
+        width: 120px;
+        height: 120px;
+        object-fit: cover;
+        border: 4px solid white;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    .mission-card, .vision-card {
+        border: none;
+        border-radius: 12px;
+        transition: transform 0.3s;
+        height: 100%;
+    }
+    
+    .mission-card:hover, .vision-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .benefit-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        color: var(--primary-color);
+    }
+    
+    .card {
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section text-center">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <i class="bi bi-hospital display-1 mb-4"></i>
+                <h1 class="display-4 fw-bold mb-3">Tentang Kami</h1>
+                <p class="lead">Tim Pengembang Apotek Online - Kelompok 3</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Mission & Vision -->
+<div class="container mb-5">
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="mission-card card h-100">
+                <div class="card-body text-center p-4">
+                    <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex p-4 mb-4">
+                        <i class="bi bi-bullseye display-4 text-primary"></i>
+                    </div>
+                    <h3 class="card-title mb-3">Misi Kami</h3>
+                    <p class="card-text">Menyediakan akses mudah dan aman untuk produk kesehatan dengan kualitas terbaik, memberikan edukasi kesehatan, dan meningkatkan kualitas hidup masyarakat melalui layanan apotek digital yang terpercaya.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="vision-card card h-100">
+                <div class="card-body text-center p-4">
+                    <div class="bg-purple bg-opacity-10 rounded-circle d-inline-flex p-4 mb-4">
+                        <i class="bi bi-eye display-4" style="color: #764ba2;"></i>
+                    </div>
+                    <h3 class="card-title mb-3">Visi Kami</h3>
+                    <p class="card-text">Menjadi platform apotek online terdepan di Indonesia yang dikenal dengan pelayanan terbaik, produk berkualitas, dan kontribusi positif bagi kesehatan masyarakat.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Team Section -->
+<section class="container mb-5">
+    <h2 class="text-center mb-4 fw-bold">Tim Pengembang</h2>
+    
+    <div class="row g-4">
+        {% for member in team_members %}
+        <div class="col-md-4 col-sm-6">
+            <div class="team-card card h-100">
+                <div class="card-body text-center p-4">
+                    {% if member.image %}
+                    <img src="{{ member.image }}" alt="{{ member.name }}" class="team-img rounded-circle mb-3">
+                    {% else %}
+                    <div class="mx-auto rounded-circle bg-light d-flex align-items-center justify-content-center mb-3" style="width: 120px; height: 120px;">
+                        <i class="bi bi-person display-4 text-muted"></i>
+                    </div>
+                    {% endif %}
+                    
+                    <h4 class="card-title mb-2">{{ member.name }}</h4>
+                    <p class="card-subtitle mb-3 text-primary fw-semibold">{{ member.role }}</p>
+                    <p class="card-text">{{ member.description }}</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- Benefits Section -->
+<section class="container mb-5">
+    <h2 class="text-center mb-4 fw-bold">Kenapa Memilih Apotek Online?</h2>
+    
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card h-100 border-success border-opacity-25">
+                <div class="card-body text-center p-4">
+                    <div class="benefit-icon">
+                        <i class="bi bi-building-check"></i>
+                    </div>
+                    <h4 class="card-title text-success">Resmi & Terlisensi</h4>
+                    <p class="card-text">Semua produk kami berasal dari distributor resmi dengan izin edar dari BPOM.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card h-100 border-primary border-opacity-25">
+                <div class="card-body text-center p-4">
+                    <div class="benefit-icon">
+                        <i class="bi bi-truck"></i>
+                    </div>
+                    <h4 class="card-title text-primary">Pengiriman Cepat</h4>
+                    <p class="card-text">Pesanan dikirim dalam waktu 1-3 jam untuk area Jakarta dan sekitarnya.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card h-100 border-purple border-opacity-25">
+                <div class="card-body text-center p-4">
+                    <div class="benefit-icon">
+                        <i class="bi bi-chat-dots"></i>
+                    </div>
+                    <h4 class="card-title" style="color: #764ba2;">Konsultasi Gratis</h4>
+                    <p class="card-text">Tim farmasis kami siap membantu konsultasi kesehatan secara online.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<div class="container text-center mb-5">
+    <a href="{% url 'produk_list' %}" class="btn btn-primary btn-lg px-5 py-3">
+        <i class="bi bi-cart-plus me-2"></i>Mulai Belanja Sekarang
+    </a>
+</div>
+{% endblock %}
