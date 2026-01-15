@@ -8,10 +8,10 @@ SECRET_KEY = 'damarcemas'
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    'apotek-production-9f2f.up.railway.app',
+    'https://apotek-production-9f2f.up.railway.app',
 ]
-csrf_trusted_origins = [
-    'apotek-production-9f2f.up.railway.app',
+CSRF_TRUSTED_ORIGINS = [
+    'https://apotek-production-9f2f.up.railway.app',
 ]
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -66,9 +66,6 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = 'static/'
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
-]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # untuk production
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

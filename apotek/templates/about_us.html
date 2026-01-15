@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}About Us - Apotek Online{% endblock %}
 
@@ -108,7 +109,7 @@
             <div class="team-card card h-100">
                 <div class="card-body text-center p-4">
                     {% if member.image %}
-                    <img src="{{ member.image }}" alt="{{ member.name }}" class="team-img rounded-circle mb-3">
+                    <img src="{% static member.image %}" alt="{{ member.name }}" class="team-img rounded-circle mb-3">
                     {% else %}
                     <div class="mx-auto rounded-circle bg-light d-flex align-items-center justify-content-center mb-3" style="width: 120px; height: 120px;">
                         <i class="bi bi-person display-4 text-muted"></i>

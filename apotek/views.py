@@ -116,50 +116,38 @@ def save_users(data):
     with open(USERS_FILE, 'w') as f:
         json.dump(data, f, indent=2)
 
-# Tambahkan setelah view yang ada
 def about_us(request):
-    """View untuk halaman About Us"""
-    
-    # Data tim dengan URL gambar dari Unsplash
     team_members = [
         {
             'name': 'Fabian Damar Setiawan',
             'role': 'Project Manager',
-            'image': '../static/images_teams/damar.jpeg',
+            'image': 'images_teams/damar.jpeg',
             'description': 'Mengkoordinasi seluruh proses pengembangan website dan memastikan timeline berjalan sesuai rencana.'
         },
         {
             'name': 'Alya Dwi Cahyani',
             'role': 'Frontend Developer',
-            'image': '../static/images_teams/alya.jpeg',
+            'image': 'images_teams/alya.jpeg',
             'description': 'Bertanggung jawab dalam desain UI/UX dan implementasi antarmuka pengguna yang responsif.'
         },
         {
             'name': 'Muhammad Taufiq Ridho',
             'role': 'Backend Developer',
-            'image': '../static/images_teams/ridho.jpeg',
+            'image': 'images_teams/ridho.jpeg',
             'description': 'Mengembangkan sistem database, logika bisnis, dan fitur-fitur utama website.'
         },
         {
             'name': 'Muhamad Fauzan Bagaskara',
             'role': 'Content Specialist',
-            'image': '../static/images_teams/bagas.jpeg',
+            'image': 'images_teams/bagas.jpeg',
             'description': 'Menyusun konten produk, artikel kesehatan, dan informasi medis yang akurat.'
         }
     ]
-    
-    # URL gambar untuk mission dan vision
-    mission_image = 'https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80'
-    vision_image = 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80'
-    logo_image = 'https://images.unsplash.com/photo-1586773860418-dc22f8b874bc?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
-    
+
     context = {
         'team_members': team_members,
-        'mission_image': mission_image,
-        'vision_image': vision_image,
-        'logo_image': logo_image,
     }
-    
+
     return render(request, 'about_us.html', context)
 
 def gallery(request):
