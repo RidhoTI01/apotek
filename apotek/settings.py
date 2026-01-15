@@ -8,7 +8,7 @@ SECRET_KEY = 'damarcemas'
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    'https://apotek-production-9f2f.up.railway.app',
+    'apotek-production-9f2f.up.railway.app',
 ]
 CSRF_TRUSTED_ORIGINS = [
     'https://apotek-production-9f2f.up.railway.app',
