@@ -7,8 +7,12 @@ SECRET_KEY = 'damarcemas'
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = [
+    'https://apotek-production-cabe.up.railway.app/',
+]
+csrf_trusted_origins = [
+    'https://apotek-production-cabe.up.railway.app/',
+]
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
