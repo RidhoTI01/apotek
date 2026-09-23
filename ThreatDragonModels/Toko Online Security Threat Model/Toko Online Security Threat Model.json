@@ -1,0 +1,41 @@
+{
+  "version": "2.6.2",
+  "release_version": "1.0",
+  "released_at": "2026-09-23",
+  "summary": {
+    "title": "Toko Online Security Threat Model",
+    "owner": "Daffa",
+    "description": "Aplikasi manajemen toko online yang memungkinkan Customer melakukan registrasi, login, melihat produk, membuat pesanan, dan melakukan pembayaran. Admin dapat mengelola produk. Sistem menggunakan React Frontend, Node.js REST API, MySQL Database, Redis Cache, Payment Gateway (Midtrans/Xendit), dan Email Service.",
+    "id": 0
+  },
+  "detail": {
+    "contributors": [
+      {
+        "name": "Ridho"
+      },
+      {
+        "name": "damar"
+      },
+      {
+        "name": "aqib"
+      },
+      {
+        "name": "aziz"
+      }
+    ],
+    "diagrams": [
+      {
+        "id": 0,
+        "title": "New STRIDE diagram",
+        "diagramType": "STRIDE",
+        "placeholder": "New STRIDE diagram description",
+        "thumbnail": "./public/content/images/thumbnail.stride.jpg",
+        "version": "2.6.2",
+        "cells": []
+      }
+    ],
+    "diagramTop": 1,
+    "reviewer": "Pak april",
+    "threatTop": 0
+  }
+}
